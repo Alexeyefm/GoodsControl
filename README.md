@@ -6,16 +6,5 @@ The consists of 3 parts:
 2) Scanner where RFID equipment is connected.
 3) Monitor from which you can get information about incoming/outgoing goods.
 
-		_________________
-		|		|
-		|		|
-	------->|    Server	|<--------
-	|	|		|	 |
-  gRPC	|	|_______________|	 | gRPC
-	|				\|/
-_________________  		_________________
-|		|		|		|
-|		|		|		|
-|    Scanner	|		|   Monitor	|
-|		|		|		|
-|_______________|		|_______________|
+"Scanner" and server communicate over gRPC. "Scanner" send data to server.
+Also "monitor" connunicate with server over gRPC. "Monitor" sends a request to server to recieve data.
