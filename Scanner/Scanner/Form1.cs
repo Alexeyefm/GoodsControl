@@ -17,12 +17,8 @@ namespace Scanner
     {
         private bool fIsInventoryScan;
         private byte scantime = 0;
-        private DateTime startTime;
-        private DateTime checkTime;
-        private TimeSpan resultTime;
-        private TimeSpan writeInhibitInterval = TimeSpan.FromSeconds(5);
-        private Dictionary<string, List<TimeSpan>> resultData = new Dictionary<string, List<TimeSpan>>();
-        private Dictionary<string, TimeSpan> bufferData = new Dictionary<string, TimeSpan>();
+        private DateTime resultTime;
+        private Dictionary<string, DateTime> scanData = new Dictionary<string, DateTime>();
         public Scanner()
         {
             InitializeComponent();
@@ -41,6 +37,8 @@ namespace Scanner
             groupBoxFirmwareVersion.Enabled = true;
             RWDev.readerInit = true;
             buttonStart.Enabled = true;
+            comboBoxScanTime.Enabled = true;
+            labelMaxScanTime.Enabled = true;
         }
 
         private void DisabledForm()
@@ -58,11 +56,31 @@ namespace Scanner
             groupBoxFirmwareVersion.Enabled = false;
             RWDev.readerInit = false;
             buttonStart.Enabled = false;
+            comboBoxScanTime.Enabled = false;
+            labelMaxScanTime.Enabled = false;
         }
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
             richTextBoxLogs.Clear();
+        }
+
+
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            ScanTimer.Enabled = !ScanTimer.Enabled;
+
+            if (ScanTimer.Enabled)
+            {
+                scantime = Convert.ToByte(comboBoxScanTime.SelectedIndex + 3);
+                fIsInventoryScan = false;
+
+                buttonStart.Text = "Stop";
+            }
+            else
+            {
+                buttonStart.Text = "Start";
+            }
         }
 
         private void Scanner_Load(object sender, EventArgs e)
@@ -73,6 +91,10 @@ namespace Scanner
             radioButtonUEBand.Checked = true;
             comboBoxSetBaudRate.SelectedIndex = 3;
             comboBoxPower.SelectedIndex = 26;
+            int i = 0;
+            for (i = 0x03; i <= 0xff; i++)
+                comboBoxScanTime.Items.Add(Convert.ToString(i) + "*100ms");
+            comboBoxScanTime.SelectedIndex = 7;
         }
 
         private void buttonConnect_Click(object sender, EventArgs e)
@@ -147,8 +169,8 @@ namespace Scanner
                                             MaskFlag, AdrTID, LenTID, RWDev.TIDFlag, RWDev.target, RWDev.inAnt, scantime, RWDev.fastFlag,
                                             EPC, ref Ant, ref Totallen, ref CardNum, RWDev.frmComPortIndex);
 
-            checkTime = DateTime.Now;
-            resultTime = checkTime - startTime;
+             
+            resultTime = DateTime.Now;
 
             if ((ErrorsCatcher.errorName == 1) | (ErrorsCatcher.errorName == 2) | (ErrorsCatcher.errorName == 3) | (ErrorsCatcher.errorName == 4))
             {
@@ -170,20 +192,11 @@ namespace Scanner
                         return;
                     }
 
-                    if (resultData.ContainsKey(sEPC) && bufferData.ContainsKey(sEPC))
+                    if (!scanData.ContainsKey(sEPC))
                     {
-                        if (resultData[sEPC].Count == 0)
-                        {
-                            resultData[sEPC].Add(resultTime);
-                            richTextBoxLogs.AppendText(resultTime.ToString() + " " + sEPC + Environment.NewLine);
-                        }
-                        else if ((resultTime - bufferData[sEPC]) > writeInhibitInterval)
-                        {
-                            resultData[sEPC].Add(resultTime);
-                            richTextBoxLogs.AppendText(resultTime.ToString() + " " + sEPC + Environment.NewLine);
-                        }
-                        bufferData[sEPC] = resultTime;
-                    }
+                        scanData.Add(sEPC, resultTime);
+                        richTextBoxLogs.AppendText(resultTime.ToString() + " goods with RFID " + sEPC + " scaned." + Environment.NewLine);
+                    }                    
                 }
             }
         }
@@ -500,6 +513,11 @@ namespace Scanner
             {
                 richTextBoxLogs.AppendText("Get buffer EPC/TID length failed!" + Environment.NewLine);
             }
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }

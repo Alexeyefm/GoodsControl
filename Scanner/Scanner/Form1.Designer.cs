@@ -83,6 +83,8 @@
             this.groupBoxRS232 = new System.Windows.Forms.GroupBox();
             this.buttonStart = new System.Windows.Forms.Button();
             this.ScanTimer = new System.Windows.Forms.Timer(this.components);
+            this.labelMaxScanTime = new System.Windows.Forms.Label();
+            this.comboBoxScanTime = new System.Windows.Forms.ComboBox();
             this.groupBoxRegion.SuspendLayout();
             this.groupBoxBaudRate.SuspendLayout();
             this.groupBoxPower.SuspendLayout();
@@ -779,17 +781,39 @@
             this.buttonStart.TabIndex = 1;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = false;
-            this.buttonStart.Click += new System.EventHandler(this.buttonRefresh_Click);
+            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
             // ScanTimer
             // 
             this.ScanTimer.Tick += new System.EventHandler(this.ScanTimer_Tick);
+            // 
+            // labelMaxScanTime
+            // 
+            this.labelMaxScanTime.AutoSize = true;
+            this.labelMaxScanTime.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labelMaxScanTime.Location = new System.Drawing.Point(228, 411);
+            this.labelMaxScanTime.Name = "labelMaxScanTime";
+            this.labelMaxScanTime.Size = new System.Drawing.Size(106, 17);
+            this.labelMaxScanTime.TabIndex = 3;
+            this.labelMaxScanTime.Text = "Max-Scan Time:";
+            // 
+            // comboBoxScanTime
+            // 
+            this.comboBoxScanTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxScanTime.FormattingEnabled = true;
+            this.comboBoxScanTime.Location = new System.Drawing.Point(346, 408);
+            this.comboBoxScanTime.Name = "comboBoxScanTime";
+            this.comboBoxScanTime.Size = new System.Drawing.Size(93, 23);
+            this.comboBoxScanTime.TabIndex = 2;
+            this.comboBoxScanTime.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // Scanner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(685, 548);
+            this.Controls.Add(this.comboBoxScanTime);
+            this.Controls.Add(this.labelMaxScanTime);
             this.Controls.Add(this.groupBoxRS232);
             this.Controls.Add(this.groupBoxReaderAddress);
             this.Controls.Add(this.groupBoxReaderSerialNumber);
@@ -889,6 +913,8 @@
         private System.Windows.Forms.TextBox textBoxFirmwareVersion;
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.Timer ScanTimer;
+        private System.Windows.Forms.Label labelMaxScanTime;
+        private System.Windows.Forms.ComboBox comboBoxScanTime;
     }
 }
 
