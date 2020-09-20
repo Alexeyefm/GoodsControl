@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "google/protobuf/duration.proto";
+
+option csharp_namespace = "ProtoGRPC";
+
+service ScannerServer {
+	rpc SendDataToServer (SendRequest) returns(SendReply) {}
+}
+
+message GoodsInfo{
+	string RFID = 1;
+	string Time = 2;
+}
+
+message SendRequest{
+	GoodsInfo GoodsInfo = 1; 
+}
+
+message SendReply{
+	bool IsGet = 1;
+}

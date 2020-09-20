@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Grpc.Core;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -10,6 +11,9 @@ using System.Windows.Forms;
 using UHF;
 using Errors;
 using Converter;
+using ProtoGRPC;
+using Google.Protobuf;
+
 
 namespace Scanner
 {
@@ -196,6 +200,17 @@ namespace Scanner
                     {
                         scanData.Add(sEPC, resultTime);
                         richTextBoxLogs.AppendText(resultTime.ToString() + " goods with RFID " + sEPC + " scaned." + Environment.NewLine);
+                        Task sendToServer = Task.Run(() => {
+                            try {
+                                Channel channel = new Channel("127.0.0.1:50051", ChannelCredentials.Insecure);
+                                var client = new ScannerServer.ScannerServerClient(channel);
+                                var reply = client.SendDataToServer(new SendRequest { GoodsInfo = { RFID = sEPC, Time = resultTime.ToString() } });
+                            }
+                            catch
+                            {
+                                richTextBoxLogs.AppendText("Send data to server failed!"+ Environment.NewLine);
+                            }
+                        });
                     }                    
                 }
             }
